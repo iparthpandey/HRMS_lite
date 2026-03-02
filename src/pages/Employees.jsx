@@ -254,7 +254,7 @@ export default function Employees() {
                     return (
                         <div key={emp.id} className="employee-card" onClick={() => navigate(`/employees/${emp.id}`)}>
                             <div className="emp-avatar" style={{ background: `linear-gradient(135deg, ${dept?.color}66, ${dept?.color}33)`, border: `2px solid ${dept?.color}60`, color: dept?.color }}>
-                                {emp.avatar}
+                                <span className="material-icons">person</span>
                             </div>
                             <div className="emp-info">
                                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>

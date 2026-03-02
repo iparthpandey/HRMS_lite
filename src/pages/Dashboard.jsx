@@ -218,8 +218,8 @@ export default function Dashboard() {
                                 <div style={{
                                     width: 36, height: 36, borderRadius: 10, background: dept?.color + '33',
                                     border: `2px solid ${dept?.color}`, display: 'flex', alignItems: 'center',
-                                    justifyContent: 'center', fontSize: 12, fontWeight: 700, color: dept?.color
-                                }}>{emp.avatar}</div>
+                                    fontWeight: 700, color: 'white', border: `2px solid ${dept?.color}50`
+                                }}><span className="material-icons" style={{ fontSize: 16 }}>person</span></div>
                                 <span style={{ fontSize: 10, color: 'var(--text-secondary)', textAlign: 'center', maxWidth: 64, lineHeight: 1.3 }}>
                                     {emp.name.split(' ')[0]}
                                 </span>

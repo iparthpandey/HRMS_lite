@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap');
 
 :root {
   --bg-primary: #0a0b1e;
@@ -43,7 +43,7 @@
 }
 
 body {
-  font-family: 'Inter', sans-serif;
+  font-family: 'Outfit', sans-serif;
   background-color: var(--bg-primary);
   color: var(--text-primary);
   min-height: 100vh;
@@ -670,9 +670,7 @@ body {
   color: var(--text-secondary);
   font-size: 13px;
   font-weight: 500;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  font-family: 'Inter', sans-serif;
+  font-family: 'Outfit', sans-serif;
 }
 
 .filter-btn:hover {
@@ -691,9 +689,7 @@ body {
   border-radius: 50px;
   border: 1px solid var(--border);
   background: var(--bg-card);
-  color: var(--text-primary);
-  font-size: 13px;
-  font-family: 'Inter', sans-serif;
+  font-family: 'Outfit', sans-serif;
   outline: none;
   transition: all 0.2s ease;
   min-width: 240px;
@@ -736,9 +732,7 @@ body {
   color: var(--text-secondary);
   font-size: 13px;
   font-weight: 500;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  font-family: 'Inter', sans-serif;
+  font-family: 'Outfit', sans-serif;
   margin-bottom: 24px;
 }
 

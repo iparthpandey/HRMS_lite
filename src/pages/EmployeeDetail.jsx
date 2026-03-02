@@ -113,7 +113,7 @@ export default function EmployeeDetail() {
                     display: 'flex', alignItems: 'center', justifyContent: 'center', color: dept?.color,
                     background: `linear-gradient(135deg, ${dept?.color}30, ${dept?.color}10)`,
                     border: `3px solid ${dept?.color}60`, flexShrink: 0,
-                }}>{emp.avatar}</div>
+                }}><span className="material-icons" style={{ fontSize: 36 }}>person</span></div>
 
                 <div style={{ flex: 1 }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: 14, flexWrap: 'wrap' }}>

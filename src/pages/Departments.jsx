@@ -164,7 +164,7 @@ export default function Departments() {
                                                 width: 22, height: 22, borderRadius: 6, background: d.color + '33',
                                                 display: 'flex', alignItems: 'center', justifyContent: 'center',
                                                 fontSize: 9, fontWeight: 700, color: d.color,
-                                            }}>{emp.avatar}</span>
+                                            }}><span className="material-icons" style={{ fontSize: 14 }}>person</span></span>
                                             {emp.name.split(' ')[0]}
                                             <span style={{ color: emp.status === 'present' ? 'var(--success)' : 'var(--warning)', display: 'flex', alignItems: 'center' }}>
                                                 <span className="material-icons" style={{ fontSize: 10 }}>circle</span>

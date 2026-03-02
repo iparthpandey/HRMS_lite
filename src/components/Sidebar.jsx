@@ -49,7 +49,9 @@ export default function Sidebar() {
 
             <div className="sidebar-footer">
                 <div className="user-card">
-                    <div className="user-avatar">AD</div>
+                    <div className="user-avatar">
+                        <span className="material-icons" style={{ fontSize: 20 }}>person</span>
+                    </div>
                     <div className="user-info">
                         <span>Admin User</span>
                         <span>Administrator</span>
