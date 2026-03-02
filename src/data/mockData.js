@@ -18,7 +18,6 @@ export const MOCK_EMPLOYEES = [
     { id: 10, emp_id: 'EMP010', name: 'Jon Snow', role: 'Security Specialist', department_id: 2, email: 'jon@company.com', avatar: 'JS', working_days: 19, total_days: 20, status: 'present' },
 ];
 
-// Map of date (YYYY-MM-DD) to map of employeeId to status
 export let MOCK_ATTENDANCE = {
     '2026-03-03': {
         1: 'present', 2: 'present', 3: 'leave', 4: 'present', 5: 'leave', 6: 'present', 7: 'present', 8: 'present', 9: 'present', 10: 'present'
@@ -27,3 +26,21 @@ export let MOCK_ATTENDANCE = {
         1: 'present', 2: 'present', 3: 'present', 4: 'present', 5: 'present', 6: 'leave', 7: 'present', 8: 'leave', 9: 'present', 10: 'present'
     }
 };
+
+export const monthlyAttendance = [
+    { month: 'Sep', present: 88, leave: 12 },
+    { month: 'Oct', present: 92, leave: 8 },
+    { month: 'Nov', present: 85, leave: 15 },
+    { month: 'Dec', present: 78, leave: 22 },
+    { month: 'Jan', present: 94, leave: 6 },
+    { month: 'Feb', present: 89, leave: 11 },
+    { month: 'Mar', present: 91, leave: 9 },
+];
+
+export const weeklyTrend = [
+    { day: 'Mon', Design: 95, Engineering: 98, Marketing: 85, HR: 100 },
+    { day: 'Tue', Design: 92, Engineering: 94, Marketing: 88, HR: 90 },
+    { day: 'Wed', Design: 100, Engineering: 96, Marketing: 82, HR: 95 },
+    { day: 'Thu', Design: 88, Engineering: 92, Marketing: 90, HR: 100 },
+    { day: 'Fri', Design: 90, Engineering: 95, Marketing: 85, HR: 92 },
+];
