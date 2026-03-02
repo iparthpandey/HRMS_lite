@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Search, Plus, X, Check, XCircle as XIcon, Trash2 } from 'lucide-react';
-import { fetchEmployees, fetchDepartments, createEmployee, updateAttendance, deleteEmployee } from '../api';
+import { Search, Plus, X, Check, XCircle as XIcon, Trash2, Calendar, ChevronLeft, ChevronRight, ArrowUpDown } from 'lucide-react';
+import { fetchEmployees, fetchDepartments, createEmployee, updateAttendance, deleteEmployee, fetchAttendanceByDate } from '../api';
 
 const COLORS = ['#6366f1', '#ec4899', '#f59e0b', '#10b981', '#3b82f6', '#8b5cf6'];
 
@@ -10,6 +10,13 @@ export default function Employees() {
     const [search, setSearch] = useState('');
     const [deptFilter, setDeptFilter] = useState('all');
     const [statusFilter, setStatusFilter] = useState('all');
+    const [sortOrder, setSortOrder] = useState('name_asc');
+    const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split('T')[0]);
+    const [dailyAttendance, setDailyAttendance] = useState({});
+
+    const [currentPage, setCurrentPage] = useState(1);
+    const itemsPerPage = 6;
+
     const [employees, setEmployees] = useState([]);
     const [departments, setDepartments] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -18,12 +25,14 @@ export default function Employees() {
 
     const loadData = async () => {
         try {
-            const [empData, deptData] = await Promise.all([
+            const [empData, deptData, attendanceData] = await Promise.all([
                 fetchEmployees(),
-                fetchDepartments()
+                fetchDepartments(),
+                fetchAttendanceByDate(selectedDate)
             ]);
             setEmployees(empData);
             setDepartments(deptData);
+            setDailyAttendance(attendanceData);
         } catch (error) {
             console.error('Failed to load data:', error);
         } finally {
@@ -33,7 +42,7 @@ export default function Employees() {
 
     useEffect(() => {
         loadData();
-    }, []);
+    }, [selectedDate]);
 
     const handleAddEmployee = async (e) => {
         e.preventDefault();
@@ -65,8 +74,12 @@ export default function Employees() {
     const handleUpdateAttendance = async (empId, status, e) => {
         e.stopPropagation();
         try {
-            await updateAttendance(empId, status);
-            loadData();
+            await updateAttendance(empId, status, selectedDate);
+            // Optimistic update
+            setDailyAttendance(prev => ({ ...prev, [empId]: status }));
+            if (selectedDate === new Date().toISOString().split('T')[0]) {
+                setEmployees(prev => prev.map(emp => emp.id === empId ? { ...emp, status } : emp));
+            }
         } catch (error) {
             alert('Error updating attendance: ' + error.message);
         }
@@ -74,16 +87,32 @@ export default function Employees() {
 
     if (loading) return <div style={{ padding: 40, textAlign: 'center' }}>Loading employees...</div>;
 
-    const filtered = employees.filter(e => {
+    // Filter, Sort, Paginate
+    let filtered = employees.filter(e => {
         const dept = departments.find(d => d.id === e.department_id);
         const matchesSearch =
             e.name.toLowerCase().includes(search.toLowerCase()) ||
             e.role.toLowerCase().includes(search.toLowerCase()) ||
             (dept?.name || '').toLowerCase().includes(search.toLowerCase());
         const matchesDept = deptFilter === 'all' || e.department_id === parseInt(deptFilter);
-        const matchesStatus = statusFilter === 'all' || e.status === statusFilter;
+
+        const currentStatus = dailyAttendance[e.id] || e.status;
+        const matchesStatus = statusFilter === 'all' || currentStatus === statusFilter;
+
         return matchesSearch && matchesDept && matchesStatus;
     });
+
+    // Sorting
+    filtered.sort((a, b) => {
+        if (sortOrder === 'name_asc') return a.name.localeCompare(b.name);
+        if (sortOrder === 'attendance_desc') return (b.working_days / b.total_days) - (a.working_days / a.total_days);
+        if (sortOrder === 'attendance_asc') return (a.working_days / a.total_days) - (b.working_days / b.total_days);
+        return 0;
+    });
+
+    // Pagination
+    const totalPages = Math.ceil(filtered.length / itemsPerPage);
+    const paginated = filtered.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
 
     return (
         <div>
@@ -92,10 +121,21 @@ export default function Employees() {
                     <h1 className="page-title">Employees</h1>
                     <p className="page-subtitle">{filtered.length} of {employees.length} employees shown</p>
                 </div>
-                <button className="add-employee-btn" onClick={() => setShowAddForm(true)}
-                    style={{ background: 'var(--accent-primary)', color: 'white', border: 'none', padding: '10px 20px', borderRadius: 8, display: 'flex', alignItems: 'center', gap: 8, fontWeight: 600, cursor: 'pointer' }}>
-                    <Plus size={18} /> Add Employee
-                </button>
+                <div style={{ display: 'flex', gap: 12 }}>
+                    <div className="date-badge" style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '4px 12px', background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: 10 }}>
+                        <Calendar size={16} />
+                        <input
+                            type="date"
+                            value={selectedDate}
+                            onChange={(e) => setSelectedDate(e.target.value)}
+                            style={{ background: 'none', border: 'none', color: 'var(--text-primary)', outline: 'none', fontSize: 13, cursor: 'pointer' }}
+                        />
+                    </div>
+                    <button className="add-employee-btn" onClick={() => setShowAddForm(true)}
+                        style={{ background: 'var(--accent-primary)', color: 'white', border: 'none', padding: '10px 20px', borderRadius: 10, display: 'flex', alignItems: 'center', gap: 8, fontWeight: 600, cursor: 'pointer' }}>
+                        <Plus size={18} /> Add Employee
+                    </button>
+                </div>
             </div>
 
             {showAddForm && (
@@ -148,24 +188,37 @@ export default function Employees() {
                     <input
                         className="search-input"
                         style={{ paddingLeft: 38, width: '100%' }}
-                        placeholder="Search by name, role or department…"
+                        placeholder="Search employees…"
                         value={search}
                         onChange={e => setSearch(e.target.value)}
                     />
                 </div>
 
-                <button className={`filter-btn ${statusFilter === 'all' ? 'active' : ''}`} onClick={() => setStatusFilter('all')}>All</button>
-                <button className={`filter-btn ${statusFilter === 'present' ? 'active' : ''}`} onClick={() => setStatusFilter('present')}>Present</button>
-                <button className={`filter-btn ${statusFilter === 'leave' ? 'active' : ''}`} onClick={() => setStatusFilter('leave')}>On Leave</button>
+                <div style={{ display: 'flex', gap: 8 }}>
+                    <select
+                        className="filter-btn"
+                        value={sortOrder}
+                        onChange={(e) => setSortOrder(e.target.value)}
+                        style={{ appearance: 'auto', paddingRight: 30 }}
+                    >
+                        <option value="name_asc">Name (A-Z)</option>
+                        <option value="attendance_desc">Highest Attendance</option>
+                        <option value="attendance_asc">Lowest Attendance</option>
+                    </select>
+
+                    <button className={`filter-btn ${statusFilter === 'all' ? 'active' : ''}`} onClick={() => setStatusFilter('all')}>All</button>
+                    <button className={`filter-btn ${statusFilter === 'present' ? 'active' : ''}`} onClick={() => setStatusFilter('present')}>Present</button>
+                    <button className={`filter-btn ${statusFilter === 'leave' ? 'active' : ''}`} onClick={() => setStatusFilter('leave')}>Absent</button>
+                </div>
             </div>
 
             <div className="filters-row" style={{ marginBottom: 24 }}>
-                <button className={`filter-btn ${deptFilter === 'all' ? 'active' : ''}`} onClick={() => setDeptFilter('all')}>All Depts</button>
+                <button className={`filter-btn ${deptFilter === 'all' ? 'active' : ''}`} onClick={() => { setDeptFilter('all'); setCurrentPage(1); }}>All Depts</button>
                 {departments.map((d, i) => (
                     <button
                         key={d.id}
                         className={`filter-btn ${deptFilter === String(d.id) ? 'active' : ''}`}
-                        onClick={() => setDeptFilter(deptFilter === String(d.id) ? 'all' : String(d.id))}
+                        onClick={() => { setDeptFilter(deptFilter === String(d.id) ? 'all' : String(d.id)); setCurrentPage(1); }}
                         style={deptFilter === String(d.id) ? { background: d.color, borderColor: d.color } : {}}
                     >
                         {d.icon} {d.name}
@@ -175,10 +228,10 @@ export default function Employees() {
 
             {/* Employee Cards */}
             <div className="employees-grid">
-                {filtered.map(emp => {
+                {paginated.map(emp => {
                     const dept = departments.find(d => d.id === emp.department_id);
-                    const deptIndex = departments.indexOf(dept);
                     const pct = Math.round((emp.working_days / emp.total_days) * 100);
+                    const currentStatus = dailyAttendance[emp.id] || emp.status;
 
                     return (
                         <div key={emp.id} className="employee-card" onClick={() => navigate(`/employees/${emp.id}`)}>
@@ -207,16 +260,16 @@ export default function Employees() {
                             <div className="emp-stats">
                                 <div style={{ display: 'flex', gap: 6 }}>
                                     <button
-                                        className={`status-badge ${emp.status === 'present' ? 'present' : ''}`}
+                                        className={`status-badge ${currentStatus === 'present' ? 'present' : ''}`}
                                         onClick={(e) => handleUpdateAttendance(emp.id, 'present', e)}
-                                        style={{ cursor: 'pointer', border: 'none', background: emp.status === 'present' ? 'rgba(16,185,129,0.15)' : 'rgba(255,255,255,0.05)', color: emp.status === 'present' ? '#10b981' : 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: 4, padding: '4px 8px', borderRadius: 6, fontSize: 10, fontWeight: 700 }}
+                                        style={{ cursor: 'pointer', border: 'none', background: currentStatus === 'present' ? 'rgba(16,185,129,0.15)' : 'rgba(255,255,255,0.05)', color: currentStatus === 'present' ? '#10b981' : 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: 4, padding: '4px 8px', borderRadius: 6, fontSize: 10, fontWeight: 700 }}
                                     >
                                         <Check size={12} /> PRESENT
                                     </button>
                                     <button
-                                        className={`status-badge ${emp.status === 'leave' ? 'leave' : ''}`}
+                                        className={`status-badge ${currentStatus === 'leave' ? 'leave' : ''}`}
                                         onClick={(e) => handleUpdateAttendance(emp.id, 'leave', e)}
-                                        style={{ cursor: 'pointer', border: 'none', background: emp.status === 'leave' ? 'rgba(245,158,11,0.1)' : 'rgba(255,255,255,0.05)', color: emp.status === 'leave' ? '#f59e0b' : 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: 4, padding: '4px 8px', borderRadius: 6, fontSize: 10, fontWeight: 700 }}
+                                        style={{ cursor: 'pointer', border: 'none', background: currentStatus === 'leave' ? 'rgba(245,158,11,0.1)' : 'rgba(255,255,255,0.05)', color: currentStatus === 'leave' ? '#f59e0b' : 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: 4, padding: '4px 8px', borderRadius: 6, fontSize: 10, fontWeight: 700 }}
                                     >
                                         <XIcon size={12} /> ABSENT
                                     </button>
@@ -238,6 +291,29 @@ export default function Employees() {
                 <div style={{ textAlign: 'center', padding: '60px 0', color: 'var(--text-muted)' }}>
                     <div style={{ fontSize: 40, marginBottom: 12 }}>🔍</div>
                     <div style={{ fontSize: 16, color: 'var(--text-secondary)' }}>No employees match your filters</div>
+                </div>
+            )}
+
+            {/* Pagination Controls */}
+            {totalPages > 1 && (
+                <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: 16, marginTop: 40, padding: '20px 0' }}>
+                    <button
+                        className="filter-btn"
+                        disabled={currentPage === 1}
+                        onClick={() => setCurrentPage(prev => prev - 1)}
+                        style={{ opacity: currentPage === 1 ? 0.4 : 1, cursor: currentPage === 1 ? 'default' : 'pointer', display: 'flex', alignItems: 'center', gap: 4 }}
+                    >
+                        <ChevronLeft size={16} /> Prev
+                    </button>
+                    <span style={{ fontSize: 14, color: 'var(--text-secondary)', fontWeight: 600 }}>Page {currentPage} of {totalPages}</span>
+                    <button
+                        className="filter-btn"
+                        disabled={currentPage === totalPages}
+                        onClick={() => setCurrentPage(prev => prev + 1)}
+                        style={{ opacity: currentPage === totalPages ? 0.4 : 1, cursor: currentPage === totalPages ? 'default' : 'pointer', display: 'flex', alignItems: 'center', gap: 4 }}
+                    >
+                        Next <ChevronRight size={16} />
+                    </button>
                 </div>
             )}
         </div>

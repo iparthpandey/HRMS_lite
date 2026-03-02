@@ -1,92 +1,29 @@
-export const departments = [
-    {
-        id: 1,
-        name: "Engineering",
-        headcount: 24,
-        color: "#6366f1",
-        icon: "💻",
-        avgAttendance: 92,
-        description: "Software development and infrastructure",
-    },
-    {
-        id: 2,
-        name: "Design",
-        headcount: 10,
-        color: "#ec4899",
-        icon: "🎨",
-        avgAttendance: 95,
-        description: "UI/UX and brand design",
-    },
-    {
-        id: 3,
-        name: "Marketing",
-        headcount: 14,
-        color: "#f59e0b",
-        icon: "📢",
-        avgAttendance: 88,
-        description: "Growth, content and campaigns",
-    },
-    {
-        id: 4,
-        name: "Sales",
-        headcount: 18,
-        color: "#10b981",
-        icon: "💼",
-        avgAttendance: 91,
-        description: "Revenue and client relations",
-    },
-    {
-        id: 5,
-        name: "HR",
-        headcount: 8,
-        color: "#3b82f6",
-        icon: "🤝",
-        avgAttendance: 97,
-        description: "People operations and culture",
-    },
-    {
-        id: 6,
-        name: "Finance",
-        headcount: 9,
-        color: "#8b5cf6",
-        icon: "📊",
-        avgAttendance: 94,
-        description: "Accounting and financial planning",
-    },
+export const MOCK_DEPARTMENTS = [
+    { id: 1, name: 'Design', icon: '🎨', color: '#6366f1', description: 'Product and visual design team' },
+    { id: 2, name: 'Engineering', icon: '💻', color: '#10b981', description: 'Software development and infrastructure' },
+    { id: 3, name: 'Marketing', icon: '📢', color: '#f59e0b', description: 'Growth and communications' },
+    { id: 4, name: 'HR', icon: '🤝', color: '#ec4899', description: 'People and culture' },
 ];
 
-export const employees = [
-    { id: 1, name: "Aarav Sharma", departmentId: 1, role: "Senior Engineer", avatar: "AS", workingDays: 22, leavesTaken: 2, totalDays: 24, status: "present" },
-    { id: 2, name: "Priya Patel", departmentId: 1, role: "Frontend Developer", avatar: "PP", workingDays: 20, leavesTaken: 4, totalDays: 24, status: "present" },
-    { id: 3, name: "Rohan Mehta", departmentId: 1, role: "Backend Developer", avatar: "RM", workingDays: 18, leavesTaken: 6, totalDays: 24, status: "leave" },
-    { id: 4, name: "Sana Khan", departmentId: 2, role: "UI Designer", avatar: "SK", workingDays: 23, leavesTaken: 1, totalDays: 24, status: "present" },
-    { id: 5, name: "Dev Kapoor", departmentId: 2, role: "UX Researcher", avatar: "DK", workingDays: 21, leavesTaken: 3, totalDays: 24, status: "present" },
-    { id: 6, name: "Nisha Verma", departmentId: 3, role: "Content Strategist", avatar: "NV", workingDays: 19, leavesTaken: 5, totalDays: 24, status: "present" },
-    { id: 7, name: "Arjun Singh", departmentId: 3, role: "Performance Marketer", avatar: "AS", workingDays: 22, leavesTaken: 2, totalDays: 24, status: "leave" },
-    { id: 8, name: "Kavya Reddy", departmentId: 4, role: "Sales Executive", avatar: "KR", workingDays: 23, leavesTaken: 1, totalDays: 24, status: "present" },
-    { id: 9, name: "Manish Gupta", departmentId: 4, role: "Account Manager", avatar: "MG", workingDays: 17, leavesTaken: 7, totalDays: 24, status: "leave" },
-    { id: 10, name: "Aisha Nair", departmentId: 5, role: "HR Manager", avatar: "AN", workingDays: 24, leavesTaken: 0, totalDays: 24, status: "present" },
-    { id: 11, name: "Vikram Joshi", departmentId: 5, role: "Talent Acquisition", avatar: "VJ", workingDays: 22, leavesTaken: 2, totalDays: 24, status: "present" },
-    { id: 12, name: "Pooja Das", departmentId: 6, role: "Financial Analyst", avatar: "PD", workingDays: 21, leavesTaken: 3, totalDays: 24, status: "present" },
-    { id: 13, name: "Rahul Tiwari", departmentId: 6, role: "Accountant", avatar: "RT", workingDays: 20, leavesTaken: 4, totalDays: 24, status: "leave" },
-    { id: 14, name: "Sneha Pillai", departmentId: 1, role: "DevOps Engineer", avatar: "SP", workingDays: 23, leavesTaken: 1, totalDays: 24, status: "present" },
-    { id: 15, name: "Amit Saxena", departmentId: 2, role: "Motion Designer", avatar: "AS", workingDays: 20, leavesTaken: 4, totalDays: 24, status: "present" },
+export const MOCK_EMPLOYEES = [
+    { id: 1, emp_id: 'EMP001', name: 'Alex Rivera', role: 'Senior Designer', department_id: 1, email: 'alex@company.com', avatar: 'AR', working_days: 18, total_days: 20, status: 'present' },
+    { id: 2, emp_id: 'EMP002', name: 'Sarah Chen', role: 'Frontend Lead', department_id: 2, email: 'sarah@company.com', avatar: 'SC', working_days: 20, total_days: 20, status: 'present' },
+    { id: 3, emp_id: 'EMP003', name: 'Jordan Smyth', role: 'Product Manager', department_id: 3, email: 'jordan@company.com', avatar: 'JS', working_days: 15, total_days: 20, status: 'leave' },
+    { id: 4, emp_id: 'EMP004', name: 'Taylor Otwell', role: 'Backend Dev', department_id: 2, email: 'taylor@company.com', avatar: 'TO', working_days: 19, total_days: 20, status: 'present' },
+    { id: 5, emp_id: 'EMP005', name: 'Morgan Freeman', role: 'HR Director', department_id: 4, email: 'morgan@company.com', avatar: 'MF', working_days: 12, total_days: 20, status: 'leave' },
+    { id: 6, emp_id: 'EMP006', name: 'Casey Wilson', role: 'UX Researcher', department_id: 1, email: 'casey@company.com', avatar: 'CW', working_days: 17, total_days: 20, status: 'present' },
+    { id: 7, emp_id: 'EMP007', name: 'Jamie Lannister', role: 'DevOps Engineeer', department_id: 2, email: 'jamie@company.com', avatar: 'JL', working_days: 14, total_days: 20, status: 'present' },
+    { id: 8, emp_id: 'EMP008', name: 'Sam Tarley', role: 'Data Analyst', department_id: 2, email: 'sam@company.com', avatar: 'ST', working_days: 18, total_days: 20, status: 'present' },
+    { id: 9, emp_id: 'EMP009', name: 'Arya Stark', role: 'QA Engineer', department_id: 2, email: 'arya@company.com', avatar: 'AS', working_days: 16, total_days: 20, status: 'present' },
+    { id: 10, emp_id: 'EMP010', name: 'Jon Snow', role: 'Security Specialist', department_id: 2, email: 'jon@company.com', avatar: 'JS', working_days: 19, total_days: 20, status: 'present' },
 ];
 
-export const monthlyAttendance = [
-    { month: "Aug", present: 88, leave: 12 },
-    { month: "Sep", present: 91, leave: 9 },
-    { month: "Oct", present: 85, leave: 15 },
-    { month: "Nov", present: 93, leave: 7 },
-    { month: "Dec", present: 78, leave: 22 },
-    { month: "Jan", present: 90, leave: 10 },
-    { month: "Feb", present: 92, leave: 8 },
-];
-
-export const weeklyTrend = [
-    { day: "Mon", Engineering: 95, Design: 90, Marketing: 85, Sales: 92, HR: 100, Finance: 95 },
-    { day: "Tue", Engineering: 90, Design: 95, Marketing: 88, Sales: 88, HR: 100, Finance: 90 },
-    { day: "Wed", Engineering: 88, Design: 85, Marketing: 92, Sales: 95, HR: 95, Finance: 88 },
-    { day: "Thu", Engineering: 93, Design: 100, Marketing: 80, Sales: 90, HR: 90, Finance: 95 },
-    { day: "Fri", Engineering: 85, Design: 90, Marketing: 88, Sales: 85, HR: 95, Finance: 90 },
-];
+// Map of date (YYYY-MM-DD) to map of employeeId to status
+export let MOCK_ATTENDANCE = {
+    '2026-03-03': {
+        1: 'present', 2: 'present', 3: 'leave', 4: 'present', 5: 'leave', 6: 'present', 7: 'present', 8: 'present', 9: 'present', 10: 'present'
+    },
+    '2026-03-02': {
+        1: 'present', 2: 'present', 3: 'present', 4: 'present', 5: 'present', 6: 'leave', 7: 'present', 8: 'leave', 9: 'present', 10: 'present'
+    }
+};
