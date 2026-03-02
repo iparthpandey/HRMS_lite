@@ -169,7 +169,7 @@ export default function Employees() {
                                 <select className="search-input" style={{ width: '100%', appearance: 'auto' }} required value={newEmp.department_id} onChange={e => setNewEmp({ ...newEmp, department_id: e.target.value })}>
                                     <option value="">Select Department</option>
                                     {departments.map(d => (
-                                        <option key={d.id} value={d.id}>{d.name}</option>
+                                        <option key={d.id} value={String(d.id)}>{d.name}</option>
                                     ))}
                                 </select>
                             </div>

@@ -1,24 +1,54 @@
-import { MOCK_EMPLOYEES, MOCK_DEPARTMENTS, MOCK_ATTENDANCE } from './data/mockData';
+import { MOCK_EMPLOYEES, MOCK_DEPARTMENTS, MOCK_ATTENDANCE, monthlyAttendance, weeklyTrend } from './data/mockData';
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000';
-const USE_MOCK = localStorage.getItem('USE_MOCK_DATA') === 'true';
+
+// Default to true unless explicitly set to 'false'
+const USE_MOCK = localStorage.getItem('USE_MOCK_DATA') !== 'false';
+
+// Helper to initialize localStorage with mock data if not already present
+const initStorage = () => {
+    if (!localStorage.getItem('employees')) {
+        localStorage.setItem('employees', JSON.stringify(MOCK_EMPLOYEES));
+    }
+    if (!localStorage.getItem('departments')) {
+        localStorage.setItem('departments', JSON.stringify(MOCK_DEPARTMENTS));
+    }
+    if (!localStorage.getItem('attendance')) {
+        localStorage.setItem('attendance', JSON.stringify(MOCK_ATTENDANCE));
+    }
+    if (!localStorage.getItem('monthlyAttendance')) {
+        localStorage.setItem('monthlyAttendance', JSON.stringify(monthlyAttendance));
+    }
+    if (!localStorage.getItem('weeklyTrend')) {
+        localStorage.setItem('weeklyTrend', JSON.stringify(weeklyTrend));
+    }
+};
+
+if (USE_MOCK) initStorage();
+
+const getStoredEmployees = () => JSON.parse(localStorage.getItem('employees') || '[]');
+const getStoredDepartments = () => JSON.parse(localStorage.getItem('departments') || '[]');
+const getStoredAttendance = () => JSON.parse(localStorage.getItem('attendance') || '{}');
 
 export async function fetchEmployees() {
-    if (USE_MOCK) return MOCK_EMPLOYEES;
+    if (USE_MOCK) return getStoredEmployees();
     const response = await fetch(`${API_BASE_URL}/employees/`);
     if (!response.ok) throw new Error('Failed to fetch employees');
     return response.json();
 }
 
 export async function fetchDepartments() {
-    if (USE_MOCK) return MOCK_DEPARTMENTS;
+    if (USE_MOCK) return getStoredDepartments();
     const response = await fetch(`${API_BASE_URL}/departments/`);
     if (!response.ok) throw new Error('Failed to fetch departments');
     return response.json();
 }
 
 export async function fetchEmployeeById(id) {
-    if (USE_MOCK) return MOCK_EMPLOYEES.find(e => e.id === parseInt(id));
+    if (USE_MOCK) {
+        const emps = getStoredEmployees();
+        return emps.find(e => e.id === parseInt(id));
+    }
     const response = await fetch(`${API_BASE_URL}/employees/${id}`);
     if (!response.ok) throw new Error('Failed to fetch employee details');
     return response.json();
@@ -26,11 +56,13 @@ export async function fetchEmployeeById(id) {
 
 export async function fetchSummary() {
     if (USE_MOCK) {
+        const emps = getStoredEmployees();
+        const depts = getStoredDepartments();
         return {
-            totalEmployees: MOCK_EMPLOYEES.length,
-            totalDepartments: MOCK_DEPARTMENTS.length,
-            presentToday: MOCK_EMPLOYEES.filter(e => e.status === 'present').length,
-            onLeave: MOCK_EMPLOYEES.filter(e => e.status === 'leave').length
+            totalEmployees: emps.length,
+            totalDepartments: depts.length,
+            presentToday: emps.filter(e => e.status === 'present').length,
+            onLeave: emps.filter(e => e.status === 'leave').length
         };
     }
     const [employees, departments] = await Promise.all([
@@ -47,8 +79,18 @@ export async function fetchSummary() {
 
 export async function createEmployee(employeeData) {
     if (USE_MOCK) {
-        const newEmp = { ...employeeData, id: MOCK_EMPLOYEES.length + 1, working_days: 0, total_days: 20 };
-        MOCK_EMPLOYEES.push(newEmp);
+        const emps = getStoredEmployees();
+        const nextId = emps.length > 0 ? Math.max(...emps.map(e => e.id)) + 1 : 1;
+        const newEmp = {
+            ...employeeData,
+            id: nextId,
+            working_days: 0,
+            leaves_taken: 0,
+            total_days: 20,
+            avatar: employeeData.name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2)
+        };
+        const updated = [...emps, newEmp];
+        localStorage.setItem('employees', JSON.stringify(updated));
         return newEmp;
     }
     const response = await fetch(`${API_BASE_URL}/employees/`, {
@@ -66,7 +108,12 @@ export async function createEmployee(employeeData) {
 }
 
 export async function deleteEmployee(id) {
-    if (USE_MOCK) return { message: 'Employee deleted' };
+    if (USE_MOCK) {
+        const emps = getStoredEmployees();
+        const updated = emps.filter(e => e.id !== parseInt(id));
+        localStorage.setItem('employees', JSON.stringify(updated));
+        return { message: 'Employee deleted' };
+    }
     const response = await fetch(`${API_BASE_URL}/employees/${id}`, {
         method: 'DELETE',
     });
@@ -79,16 +126,24 @@ export async function deleteEmployee(id) {
 
 export async function updateAttendance(employeeId, status, date) {
     if (USE_MOCK) {
+        const attendance = getStoredAttendance();
         const targetDate = date || new Date().toISOString().split('T')[0];
-        if (!MOCK_ATTENDANCE[targetDate]) {
-            MOCK_ATTENDANCE[targetDate] = {};
+
+        if (!attendance[targetDate]) {
+            attendance[targetDate] = {};
         }
-        MOCK_ATTENDANCE[targetDate][employeeId] = status;
+        attendance[targetDate][employeeId] = status;
+        localStorage.setItem('attendance', JSON.stringify(attendance));
 
         // Also update the employee's main status if it's "today"
-        if (!date || date === new Date().toISOString().split('T')[0]) {
-            const emp = MOCK_EMPLOYEES.find(e => e.id === parseInt(employeeId));
-            if (emp) emp.status = status;
+        const today = new Date().toISOString().split('T')[0];
+        if (targetDate === today) {
+            const emps = getStoredEmployees();
+            const index = emps.findIndex(e => e.id === parseInt(employeeId));
+            if (index !== -1) {
+                emps[index].status = status;
+                localStorage.setItem('employees', JSON.stringify(emps));
+            }
         }
         return { message: 'Attendance updated' };
     }
@@ -111,7 +166,8 @@ export async function updateAttendance(employeeId, status, date) {
  */
 export async function fetchAttendanceByDate(date) {
     if (USE_MOCK) {
-        return MOCK_ATTENDANCE[date] || {};
+        const attendance = getStoredAttendance();
+        return attendance[date] || {};
     }
     const response = await fetch(`${API_BASE_URL}/attendance/?date=${date}`);
     if (!response.ok) throw new Error('Failed to fetch attendance for date');
