@@ -109,7 +109,7 @@ export default function Dashboard() {
                     <div className="chart-header">
                         <div>
                             <div className="chart-title">Monthly Attendance Trend</div>
-                            <div className="chart-subtitle">Present vs Leave — last 7 months</div>
+                            <div className="chart-subtitle">Present vs Leave - last 7 months</div>
                         </div>
                         <span className="material-icons" style={{ fontSize: 18, color: 'var(--accent-primary)' }}>trending_up</span>
                     </div>
@@ -207,7 +207,7 @@ export default function Dashboard() {
                     {employees.map(emp => {
                         const dept = departments.find(d => d.id === emp.department_id);
                         return (
-                            <div key={emp.id} title={`${emp.name} — ${emp.status}`}
+                            <div key={emp.id} title={`${emp.name} - ${emp.status}`}
                                 style={{
                                     display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 6,
                                     padding: '12px 10px', borderRadius: 12, minWidth: 72,
@@ -223,8 +223,8 @@ export default function Dashboard() {
                                 <span style={{ fontSize: 10, color: 'var(--text-secondary)', textAlign: 'center', maxWidth: 64, lineHeight: 1.3 }}>
                                     {emp.name.split(' ')[0]}
                                 </span>
-                                <span style={{ fontSize: 9, color: emp.status === 'present' ? 'var(--success)' : 'var(--warning)', fontWeight: 700 }}>
-                                    {emp.status === 'present' ? '● IN' : '● OUT'}
+                                <span style={{ fontSize: 9, color: emp.status === 'present' ? 'var(--success)' : 'var(--warning)', fontWeight: 700, display: 'flex', alignItems: 'center', gap: 2 }}>
+                                    <span className="material-icons" style={{ fontSize: 8 }}>circle</span> {emp.status === 'present' ? 'IN' : 'OUT'}
                                 </span>
                             </div>
                         );

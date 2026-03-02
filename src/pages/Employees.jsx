@@ -206,7 +206,7 @@ export default function Employees() {
                     <input
                         className="search-input"
                         style={{ paddingLeft: 38, width: '100%' }}
-                        placeholder="Search employees…"
+                        placeholder="Search employees..."
                         value={search}
                         onChange={e => setSearch(e.target.value)}
                     />

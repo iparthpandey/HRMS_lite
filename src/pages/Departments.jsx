@@ -166,8 +166,8 @@ export default function Departments() {
                                                 fontSize: 9, fontWeight: 700, color: d.color,
                                             }}>{emp.avatar}</span>
                                             {emp.name.split(' ')[0]}
-                                            <span style={{ color: emp.status === 'present' ? 'var(--success)' : 'var(--warning)', fontSize: 10 }}>
-                                                ●
+                                            <span style={{ color: emp.status === 'present' ? 'var(--success)' : 'var(--warning)', display: 'flex', alignItems: 'center' }}>
+                                                <span className="material-icons" style={{ fontSize: 10 }}>circle</span>
                                             </span>
                                         </div>
                                     ))}
