@@ -4,7 +4,7 @@ import {
     RadialBarChart, RadialBar, ResponsiveContainer,
     BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Cell
 } from 'recharts';
-import { ArrowLeft, MapPin, Briefcase, CalendarCheck, CalendarX, TrendingUp, Check, XCircle as XIcon } from 'lucide-react';
+import { ArrowLeft, MapPin, Briefcase, CalendarCheck, CalendarX, TrendingUp, Check, XCircle as XIcon, UserX } from 'lucide-react';
 import { fetchEmployeeById, fetchDepartments, updateAttendance } from '../api';
 
 export default function EmployeeDetail() {
@@ -47,7 +47,7 @@ export default function EmployeeDetail() {
 
     if (!emp) return (
         <div style={{ textAlign: 'center', padding: '80px 0', color: 'var(--text-muted)' }}>
-            <div style={{ fontSize: 48, marginBottom: 12 }}>🔍</div>
+            <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 12 }}><UserX size={48} strokeWidth={1.5} /></div>
             <div>Employee not found</div>
             <button className="back-btn" style={{ marginTop: 24 }} onClick={() => navigate('/employees')}>← Back to Employees</button>
         </div>
@@ -254,7 +254,8 @@ export default function EmployeeDetail() {
                         <YAxis tick={{ fill: '#64748b', fontSize: 12 }} axisLine={false} tickLine={false} domain={[0, 10]} unit="h" />
                         <Tooltip
                             formatter={(v) => [`${v} hrs`]}
-                            contentStyle={{ background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: 10, fontSize: 12 }}
+                            contentStyle={{ background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: 10, fontSize: 12, color: 'var(--text-primary)' }}
+                            itemStyle={{ color: 'var(--text-primary)' }}
                         />
                         <Bar dataKey="hours" radius={[8, 8, 0, 0]} maxBarSize={52}>
                             {weeklyData.map((entry, i) => (

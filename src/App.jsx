@@ -17,7 +17,8 @@ export default function App() {
             <Route path="/departments" element={<Departments />} />
             <Route path="/employees" element={<Employees />} />
             <Route path="/employees/:id" element={<EmployeeDetail />} />
-            <Route path="/calendar" element={<Calendar />} />
+            <Route path="/notifications" element={<ComingSoon title="Notifications" emoji="🔔" />} />
+            <Route path="/settings" element={<ComingSoon title="Settings" emoji="⚙️" />} />
           </Routes>
         </main>
       </div>
@@ -25,18 +26,18 @@ export default function App() {
   );
 }
 
-function Calendar() {
+function ComingSoon({ title, emoji }) {
   return (
     <div>
       <div className="page-header">
         <div>
-          <h1 className="page-title">Calendar</h1>
-          <p className="page-subtitle">Attendance calendar view — coming soon</p>
+          <h1 className="page-title">{title}</h1>
+          <p className="page-subtitle">{title} management — coming soon</p>
         </div>
       </div>
       <div className="card" style={{ textAlign: 'center', padding: '80px', color: 'var(--text-muted)' }}>
-        <div style={{ fontSize: 60, marginBottom: 16 }}>📅</div>
-        <div style={{ fontSize: 18, fontWeight: 600, color: 'var(--text-secondary)' }}>Calendar view coming soon</div>
+        <div style={{ fontSize: 60, marginBottom: 16 }}>{emoji}</div>
+        <div style={{ fontSize: 18, fontWeight: 600, color: 'var(--text-secondary)' }}>{title} page coming soon</div>
       </div>
     </div>
   );

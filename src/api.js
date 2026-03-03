@@ -1,29 +1,39 @@
-const API_BASE_URL = 'http://localhost:8000';
+import { employees as initialEmployees, departments as initialDepartments } from './data/mockData';
+
+// Persistence helpers
+const STORAGE_KEYS = {
+    EMPLOYEES: 'hrms_employees',
+    DEPARTMENTS: 'hrms_departments'
+};
+
+const getStoredData = (key, initial) => {
+    const stored = localStorage.getItem(key);
+    return stored ? JSON.parse(stored) : initial;
+};
+
+const saveStoredData = (key, data) => {
+    localStorage.setItem(key, JSON.stringify(data));
+};
+
+// Initialize from storage or defaults
+let employees = getStoredData(STORAGE_KEYS.EMPLOYEES, initialEmployees);
+let departments = getStoredData(STORAGE_KEYS.DEPARTMENTS, initialDepartments);
 
 export async function fetchEmployees() {
-    const response = await fetch(`${API_BASE_URL}/employees/`);
-    if (!response.ok) throw new Error('Failed to fetch employees');
-    return response.json();
+    return employees;
 }
 
 export async function fetchDepartments() {
-    const response = await fetch(`${API_BASE_URL}/departments/`);
-    if (!response.ok) throw new Error('Failed to fetch departments');
-    return response.json();
+    return departments;
 }
 
 export async function fetchEmployeeById(id) {
-    const response = await fetch(`${API_BASE_URL}/employees/${id}`);
-    if (!response.ok) throw new Error('Failed to fetch employee details');
-    return response.json();
+    const emp = employees.find(e => String(e.id) === String(id));
+    if (!emp) throw new Error('Employee not found');
+    return emp;
 }
 
 export async function fetchSummary() {
-    // Assuming backend has a summary endpoint or we calculate from data
-    const [employees, departments] = await Promise.all([
-        fetchEmployees(),
-        fetchDepartments()
-    ]);
     return {
         totalEmployees: employees.length,
         totalDepartments: departments.length,
@@ -33,31 +43,36 @@ export async function fetchSummary() {
 }
 
 export async function createEmployee(employeeData) {
-    const response = await fetch(`${API_BASE_URL}/employees/`, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(employeeData),
-    });
-    if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.detail || 'Failed to create employee');
-    }
-    return response.json();
+    const newId = employees.length > 0 ? Math.max(...employees.map(e => e.id)) + 1 : 1;
+    const newEmp = {
+        ...employeeData,
+        id: newId,
+        working_days: 0,
+        leaves_taken: 0,
+        total_days: 22, // Default
+        avatar: employeeData.name.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase()
+    };
+    employees = [...employees, newEmp];
+    saveStoredData(STORAGE_KEYS.EMPLOYEES, employees);
+    return newEmp;
 }
 
 export async function updateAttendance(employeeId, status) {
-    const response = await fetch(`${API_BASE_URL}/employees/${employeeId}/attendance`, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ status }),
-    });
-    if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.detail || 'Failed to update attendance');
+    const empIndex = employees.findIndex(e => String(e.id) === String(employeeId));
+    if (empIndex !== -1) {
+        const emp = { ...employees[empIndex] };
+        if (emp.status !== status) {
+            if (status === 'present') {
+                emp.working_days = (emp.working_days || 0) + 1;
+                if (emp.leaves_taken > 0) emp.leaves_taken -= 1;
+            } else if (status === 'leave') {
+                emp.leaves_taken = (emp.leaves_taken || 0) + 1;
+                if (emp.working_days > 0) emp.working_days -= 1;
+            }
+            emp.status = status;
+            employees[empIndex] = emp;
+            saveStoredData(STORAGE_KEYS.EMPLOYEES, employees);
+        }
     }
-    return response.json();
+    return { success: true };
 }

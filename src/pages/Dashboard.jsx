@@ -3,9 +3,9 @@ import {
     AreaChart, Area, BarChart, Bar, PieChart, Pie, Cell,
     XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend
 } from 'recharts';
-import { TrendingUp, TrendingDown, Users, CheckCircle, XCircle, Clock } from 'lucide-react';
+import { TrendingUp, TrendingDown, Users, CheckCircle, XCircle, Clock, Search, Umbrella } from 'lucide-react';
 import { fetchEmployees, fetchDepartments } from '../api';
-import { monthlyAttendance, weeklyTrend } from '../data/mockData';
+import { monthlyAttendance, weeklyTrend, employees as mockEmployees, departments as mockDepartments } from '../data/mockData';
 
 const COLORS = ['#6366f1', '#ec4899', '#f59e0b', '#10b981', '#3b82f6', '#8b5cf6'];
 
@@ -14,7 +14,7 @@ const CustomTooltip = ({ active, payload, label }) => {
         return (
             <div style={{
                 background: 'var(--bg-card)', border: '1px solid var(--border)',
-                borderRadius: 10, padding: '12px 16px', fontSize: 13
+                borderRadius: 10, padding: '12px 16px', fontSize: 13, color: 'var(--text-primary)'
             }}>
                 <p style={{ color: 'var(--text-secondary)', marginBottom: 6, fontWeight: 600 }}>{label}</p>
                 {payload.map((p, i) => (
@@ -43,7 +43,9 @@ export default function Dashboard() {
                 setEmployees(empData);
                 setDepartments(deptData);
             } catch (error) {
-                console.error('Failed to load dashboard data:', error);
+                console.warn('API unavailable, falling back to mock data:', error);
+                setEmployees(mockEmployees);
+                setDepartments(mockDepartments);
             } finally {
                 setLoading(false);
             }
@@ -82,22 +84,22 @@ export default function Dashboard() {
             {/* KPI Cards */}
             <div className="kpi-grid">
                 <KpiCard
-                    icon="👥" iconBg="rgba(99,102,241,0.15)" iconColor="#6366f1"
+                    icon={Users} iconBg="rgba(99,102,241,0.15)" iconColor="#6366f1"
                     value={totalEmployees} label="Total Employees"
                     change="+2 this month" up={true}
                 />
                 <KpiCard
-                    icon="✅" iconBg="rgba(16,185,129,0.15)" iconColor="#10b981"
+                    icon={CheckCircle} iconBg="rgba(16,185,129,0.15)" iconColor="#10b981"
                     value={presentToday} label="Present Today"
                     change={`${attendanceRate}% attendance`} up={true}
                 />
                 <KpiCard
-                    icon="🏖️" iconBg="rgba(245,158,11,0.15)" iconColor="#f59e0b"
+                    icon={Umbrella} iconBg="rgba(245,158,11,0.15)" iconColor="#f59e0b"
                     value={onLeave} label="On Leave"
                     change="vs 3 yesterday" up={false}
                 />
                 <KpiCard
-                    icon="📈" iconBg="rgba(139,92,246,0.15)" iconColor="#8b5cf6"
+                    icon={TrendingUp} iconBg="rgba(139,92,246,0.15)" iconColor="#8b5cf6"
                     value={`${attendanceRate}%`} label="Avg Attendance"
                     change="+2.1% vs last month" up={true}
                 />
@@ -156,7 +158,8 @@ export default function Dashboard() {
                             </Pie>
                             <Tooltip
                                 formatter={(val, name) => [`${val} employees`, name]}
-                                contentStyle={{ background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: 10, fontSize: 12 }}
+                                contentStyle={{ background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: 10, fontSize: 12, color: 'var(--text-primary)' }}
+                                itemStyle={{ color: 'var(--text-primary)' }}
                             />
                         </PieChart>
                     </ResponsiveContainer>
@@ -185,7 +188,8 @@ export default function Dashboard() {
                         <XAxis dataKey="day" tick={{ fill: '#64748b', fontSize: 12 }} axisLine={false} tickLine={false} />
                         <YAxis tick={{ fill: '#64748b', fontSize: 12 }} axisLine={false} tickLine={false} domain={[70, 100]} unit="%" />
                         <Tooltip
-                            contentStyle={{ background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: 10, fontSize: 12 }}
+                            contentStyle={{ background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: 10, fontSize: 12, color: 'var(--text-primary)' }}
+                            itemStyle={{ color: 'var(--text-primary)' }}
                             formatter={(v) => [`${v}%`]}
                         />
                         <Legend wrapperStyle={{ fontSize: 12, color: 'var(--text-secondary)', paddingTop: 12 }} />
@@ -236,11 +240,11 @@ export default function Dashboard() {
     );
 }
 
-function KpiCard({ icon, iconBg, iconColor, value, label, change, up }) {
+function KpiCard({ icon: Icon, iconBg, iconColor, value, label, change, up }) {
     return (
         <div className="kpi-card">
             <div className="kpi-icon" style={{ background: iconBg }}>
-                <span style={{ fontSize: 22 }}>{icon}</span>
+                <Icon size={22} color={iconColor} />
             </div>
             <div className="kpi-value">{value}</div>
             <div className="kpi-label">{label}</div>

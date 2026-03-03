@@ -7,23 +7,23 @@ import {
     CalendarDays,
     Settings,
     Bell,
+    ClipboardList,
 } from 'lucide-react';
 
 const navItems = [
     { icon: LayoutDashboard, label: 'Dashboard', to: '/' },
     { icon: Building2, label: 'Departments', to: '/departments' },
     { icon: Users, label: 'Employees', to: '/employees' },
-    { icon: CalendarDays, label: 'Calendar', to: '/calendar' },
 ];
 
 export default function Sidebar() {
     return (
         <aside className="sidebar">
             <div className="sidebar-logo">
-                <div className="logo-icon">📋</div>
+                <div className="logo-icon"><ClipboardList size={22} /></div>
                 <div className="logo-text">
-                    <span>AttendTrack</span>
-                    <span>Management System</span>
+                    <span>HRMS</span>
+                    <span>Human Resource Management System</span>
                 </div>
             </div>
 
@@ -42,15 +42,21 @@ export default function Sidebar() {
                 ))}
 
                 <span className="nav-label" style={{ marginTop: 24 }}>System</span>
-                <div className="nav-item">
+                <NavLink
+                    to="/notifications"
+                    className={({ isActive }) => `nav-item${isActive ? ' active' : ''}`}
+                >
                     <Bell className="nav-icon" size={18} />
                     Notifications
                     <span className="badge" style={{ marginLeft: 'auto' }}>3</span>
-                </div>
-                <div className="nav-item">
+                </NavLink>
+                <NavLink
+                    to="/settings"
+                    className={({ isActive }) => `nav-item${isActive ? ' active' : ''}`}
+                >
                     <Settings className="nav-icon" size={18} />
                     Settings
-                </div>
+                </NavLink>
             </nav>
 
             <div className="sidebar-footer">

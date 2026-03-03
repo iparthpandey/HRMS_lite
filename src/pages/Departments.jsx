@@ -5,6 +5,17 @@ import {
     PieChart, Pie, Cell, Tooltip
 } from 'recharts';
 import { fetchDepartments, fetchEmployees } from '../api';
+import { departments as mockDepartments, employees as mockEmployees } from '../data/mockData';
+import { Laptop, Palette, Megaphone, Briefcase, Users, BarChart2, Search } from 'lucide-react';
+
+const DEPT_ICONS = {
+    Laptop, Palette, Megaphone, Briefcase, HandshakeIcon: Users, BarChart2,
+};
+
+function DeptIcon({ name, size = 16, color }) {
+    const Icon = DEPT_ICONS[name] || Briefcase;
+    return <Icon size={size} color={color} />;
+}
 
 const COLORS = ['#6366f1', '#ec4899', '#f59e0b', '#10b981', '#3b82f6', '#8b5cf6'];
 
@@ -25,7 +36,9 @@ export default function Departments() {
                 setDepartments(deptData);
                 setEmployees(empData);
             } catch (error) {
-                console.error('Failed to load departments:', error);
+                console.warn('API unavailable, falling back to mock data:', error);
+                setDepartments(mockDepartments);
+                setEmployees(mockEmployees);
             } finally {
                 setLoading(false);
             }
@@ -70,7 +83,7 @@ export default function Departments() {
                                 fillOpacity={0.2} strokeWidth={2} dot={{ fill: '#6366f1', r: 4 }} />
                             <Tooltip
                                 formatter={(v) => [`${v}%`, 'Attendance']}
-                                contentStyle={{ background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: 10, fontSize: 12 }}
+                                contentStyle={{ background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: 10, fontSize: 12, color: 'var(--text-primary)' }}
                             />
                         </RadarChart>
                     </ResponsiveContainer>
@@ -92,7 +105,8 @@ export default function Departments() {
                             </Pie>
                             <Tooltip
                                 formatter={(v, n) => [`${v} people`, n]}
-                                contentStyle={{ background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: 10, fontSize: 12 }}
+                                contentStyle={{ background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: 10, fontSize: 12, color: 'var(--text-primary)' }}
+                                itemStyle={{ color: 'var(--text-primary)' }}
                             />
                         </PieChart>
                     </ResponsiveContainer>
@@ -127,7 +141,7 @@ export default function Departments() {
                         }} />
                         <div className="dept-top">
                             <div className="dept-icon" style={{ background: d.color + '20' }}>
-                                {d.icon}
+                                <DeptIcon name={d.icon} size={20} color={d.color} />
                             </div>
                             <div className="dept-headcount">
                                 <div className="number">{d.headcount}</div>
