@@ -126,8 +126,8 @@ export default function Departments() {
                             zIndex: 1,
                         }} />
                         <div className="dept-top">
-                            <div className="dept-icon" style={{ background: d.color + '20', color: d.color }}>
-                                <span className="material-icons" style={{ fontSize: 26 }}>{d.icon}</span>
+                            <div className="dept-icon" style={{ background: d.color + '20' }}>
+                                {d.icon}
                             </div>
                             <div className="dept-headcount">
                                 <div className="number">{d.headcount}</div>
@@ -164,10 +164,10 @@ export default function Departments() {
                                                 width: 22, height: 22, borderRadius: 6, background: d.color + '33',
                                                 display: 'flex', alignItems: 'center', justifyContent: 'center',
                                                 fontSize: 9, fontWeight: 700, color: d.color,
-                                            }}><span className="material-icons" style={{ fontSize: 14 }}>person</span></span>
+                                            }}>{emp.avatar}</span>
                                             {emp.name.split(' ')[0]}
-                                            <span style={{ color: emp.status === 'present' ? 'var(--success)' : 'var(--warning)', display: 'flex', alignItems: 'center' }}>
-                                                <span className="material-icons" style={{ fontSize: 10 }}>circle</span>
+                                            <span style={{ color: emp.status === 'present' ? 'var(--success)' : 'var(--warning)', fontSize: 10 }}>
+                                                ●
                                             </span>
                                         </div>
                                     ))}

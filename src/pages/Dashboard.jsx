@@ -3,6 +3,7 @@ import {
     AreaChart, Area, BarChart, Bar, PieChart, Pie, Cell,
     XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend
 } from 'recharts';
+import { TrendingUp, TrendingDown, Users, CheckCircle, XCircle, Clock } from 'lucide-react';
 import { fetchEmployees, fetchDepartments } from '../api';
 import { monthlyAttendance, weeklyTrend } from '../data/mockData';
 
@@ -73,7 +74,7 @@ export default function Dashboard() {
                     <p className="page-subtitle">Real-time attendance overview across all departments</p>
                 </div>
                 <div className="date-badge">
-                    <span className="material-icons" style={{ fontSize: 16, marginRight: 8 }}>schedule</span>
+                    <Clock size={14} />
                     {dateStr}
                 </div>
             </div>
@@ -81,22 +82,22 @@ export default function Dashboard() {
             {/* KPI Cards */}
             <div className="kpi-grid">
                 <KpiCard
-                    icon="groups" iconBg="rgba(99,102,241,0.15)" iconColor="#6366f1"
+                    icon="👥" iconBg="rgba(99,102,241,0.15)" iconColor="#6366f1"
                     value={totalEmployees} label="Total Employees"
                     change="+2 this month" up={true}
                 />
                 <KpiCard
-                    icon="check_circle" iconBg="rgba(16,185,129,0.15)" iconColor="#10b981"
+                    icon="✅" iconBg="rgba(16,185,129,0.15)" iconColor="#10b981"
                     value={presentToday} label="Present Today"
                     change={`${attendanceRate}% attendance`} up={true}
                 />
                 <KpiCard
-                    icon="event_busy" iconBg="rgba(245,158,11,0.15)" iconColor="#f59e0b"
+                    icon="🏖️" iconBg="rgba(245,158,11,0.15)" iconColor="#f59e0b"
                     value={onLeave} label="On Leave"
                     change="vs 3 yesterday" up={false}
                 />
                 <KpiCard
-                    icon="trending_up" iconBg="rgba(139,92,246,0.15)" iconColor="#8b5cf6"
+                    icon="📈" iconBg="rgba(139,92,246,0.15)" iconColor="#8b5cf6"
                     value={`${attendanceRate}%`} label="Avg Attendance"
                     change="+2.1% vs last month" up={true}
                 />
@@ -109,9 +110,9 @@ export default function Dashboard() {
                     <div className="chart-header">
                         <div>
                             <div className="chart-title">Monthly Attendance Trend</div>
-                            <div className="chart-subtitle">Present vs Leave - last 7 months</div>
+                            <div className="chart-subtitle">Present vs Leave — last 7 months</div>
                         </div>
-                        <span className="material-icons" style={{ fontSize: 18, color: 'var(--accent-primary)' }}>trending_up</span>
+                        <TrendingUp size={18} color="var(--accent-primary)" />
                     </div>
                     <ResponsiveContainer width="100%" height={240}>
                         <AreaChart data={monthlyAttendance} margin={{ top: 4, right: 8, left: -16, bottom: 0 }}>
@@ -207,7 +208,7 @@ export default function Dashboard() {
                     {employees.map(emp => {
                         const dept = departments.find(d => d.id === emp.department_id);
                         return (
-                            <div key={emp.id} title={`${emp.name} - ${emp.status}`}
+                            <div key={emp.id} title={`${emp.name} — ${emp.status}`}
                                 style={{
                                     display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 6,
                                     padding: '12px 10px', borderRadius: 12, minWidth: 72,
@@ -218,13 +219,13 @@ export default function Dashboard() {
                                 <div style={{
                                     width: 36, height: 36, borderRadius: 10, background: dept?.color + '33',
                                     border: `2px solid ${dept?.color}`, display: 'flex', alignItems: 'center',
-                                    fontWeight: 700, color: 'white', border: `2px solid ${dept?.color}50`
-                                }}><span className="material-icons" style={{ fontSize: 16 }}>person</span></div>
+                                    justifyContent: 'center', fontSize: 12, fontWeight: 700, color: dept?.color
+                                }}>{emp.avatar}</div>
                                 <span style={{ fontSize: 10, color: 'var(--text-secondary)', textAlign: 'center', maxWidth: 64, lineHeight: 1.3 }}>
                                     {emp.name.split(' ')[0]}
                                 </span>
-                                <span style={{ fontSize: 9, color: emp.status === 'present' ? 'var(--success)' : 'var(--warning)', fontWeight: 700, display: 'flex', alignItems: 'center', gap: 2 }}>
-                                    <span className="material-icons" style={{ fontSize: 8 }}>circle</span> {emp.status === 'present' ? 'IN' : 'OUT'}
+                                <span style={{ fontSize: 9, color: emp.status === 'present' ? 'var(--success)' : 'var(--warning)', fontWeight: 700 }}>
+                                    {emp.status === 'present' ? '● IN' : '● OUT'}
                                 </span>
                             </div>
                         );
@@ -238,13 +239,13 @@ export default function Dashboard() {
 function KpiCard({ icon, iconBg, iconColor, value, label, change, up }) {
     return (
         <div className="kpi-card">
-            <div className="kpi-icon" style={{ background: iconBg, color: iconColor }}>
-                <span className="material-icons">{icon}</span>
+            <div className="kpi-icon" style={{ background: iconBg }}>
+                <span style={{ fontSize: 22 }}>{icon}</span>
             </div>
             <div className="kpi-value">{value}</div>
             <div className="kpi-label">{label}</div>
             <div className={`kpi-change ${up ? 'up' : 'down'}`}>
-                <span className="material-icons" style={{ fontSize: 14 }}>{up ? 'trending_up' : 'trending_down'}</span>
+                {up ? <TrendingUp size={12} /> : <TrendingDown size={12} />}
                 {change}
             </div>
         </div>

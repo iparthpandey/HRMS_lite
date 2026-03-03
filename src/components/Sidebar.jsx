@@ -1,57 +1,61 @@
 import React from 'react';
-import { NavLink } from 'react-router-dom';
+import { NavLink, useLocation } from 'react-router-dom';
+import {
+    LayoutDashboard,
+    Building2,
+    Users,
+    CalendarDays,
+    Settings,
+    Bell,
+} from 'lucide-react';
 
 const navItems = [
-    { icon: 'dashboard', label: 'Dashboard', to: '/' },
-    { icon: 'business', label: 'Departments', to: '/departments' },
-    { icon: 'people', label: 'Employees', to: '/employees' },
-    { icon: 'calendar_today', label: 'Calendar', to: '/calendar' },
+    { icon: LayoutDashboard, label: 'Dashboard', to: '/' },
+    { icon: Building2, label: 'Departments', to: '/departments' },
+    { icon: Users, label: 'Employees', to: '/employees' },
+    { icon: CalendarDays, label: 'Calendar', to: '/calendar' },
 ];
 
 export default function Sidebar() {
     return (
         <aside className="sidebar">
             <div className="sidebar-logo">
-                <div className="logo-icon">
-                    <span className="material-icons" style={{ fontSize: 24, color: '#fff' }}>fingerprint</span>
-                </div>
+                <div className="logo-icon">📋</div>
                 <div className="logo-text">
-                    <span>HRMS</span>
+                    <span>AttendTrack</span>
                     <span>Management System</span>
                 </div>
             </div>
 
             <nav className="sidebar-nav">
                 <span className="nav-label">Main Menu</span>
-                {navItems.map(({ icon, label, to }) => (
+                {navItems.map(({ icon: Icon, label, to }) => (
                     <NavLink
                         key={to}
                         to={to}
                         end={to === '/'}
                         className={({ isActive }) => `nav-item${isActive ? ' active' : ''}`}
                     >
-                        <span className="material-icons" style={{ fontSize: 20 }}>{icon}</span>
+                        <Icon className="nav-icon" size={18} />
                         {label}
                     </NavLink>
                 ))}
 
                 <span className="nav-label" style={{ marginTop: 24 }}>System</span>
-                <NavLink to="/notifications" className={({ isActive }) => `nav-item${isActive ? ' active' : ''}`}>
-                    <span className="material-icons" style={{ fontSize: 20 }}>notifications</span>
+                <div className="nav-item">
+                    <Bell className="nav-icon" size={18} />
                     Notifications
                     <span className="badge" style={{ marginLeft: 'auto' }}>3</span>
-                </NavLink>
-                <NavLink to="/settings" className={({ isActive }) => `nav-item${isActive ? ' active' : ''}`}>
-                    <span className="material-icons" style={{ fontSize: 20 }}>settings</span>
+                </div>
+                <div className="nav-item">
+                    <Settings className="nav-icon" size={18} />
                     Settings
-                </NavLink>
+                </div>
             </nav>
 
             <div className="sidebar-footer">
                 <div className="user-card">
-                    <div className="user-avatar">
-                        <span className="material-icons" style={{ fontSize: 20 }}>person</span>
-                    </div>
+                    <div className="user-avatar">AD</div>
                     <div className="user-info">
                         <span>Admin User</span>
                         <span>Administrator</span>
